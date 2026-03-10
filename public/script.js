@@ -1,9 +1,134 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  // FAB social media toggle
+  const fab = document.querySelector('.fab-social');
+  const fabToggle = document.querySelector('.fab-toggle');
+  if (fabToggle && fab) {
+    fabToggle.addEventListener('click', () => {
+      fab.classList.toggle('active');
+    });
+    // Inchide cand dai click in afara
+    document.addEventListener('click', (e) => {
+      if (!fab.contains(e.target)) {
+        fab.classList.remove('active');
+      }
+    });
+  }
+
+  // Hamburger menu
+  const hamburger = document.querySelector('.hamburger');
+  const navUl = document.querySelector('.main-nav ul');
+  if (hamburger && navUl) {
+    // Cream overlay
+    const overlay = document.createElement('div');
+    overlay.classList.add('mobile-overlay');
+    document.body.appendChild(overlay);
+
+    const closeMobileMenu = () => {
+      hamburger.classList.remove('active');
+      navUl.classList.remove('open');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navUl.classList.toggle('open');
+      overlay.classList.toggle('active');
+      document.body.style.overflow = navUl.classList.contains('open') ? 'hidden' : '';
+    });
+
+    // Click in afara meniului (dar nu pe hamburger) => inchide meniul
+    document.addEventListener('click', (e) => {
+      if (!navUl.classList.contains('open')) {
+        return;
+      }
+
+      const clickedInsideMenu = navUl.contains(e.target);
+      const clickedHamburger = hamburger.contains(e.target);
+      if (!clickedInsideMenu && !clickedHamburger) {
+        closeMobileMenu();
+      }
+    });
+
+    // Click pe link din meniu mobil => inchide + navigheaza explicit
+    navUl.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link || !navUl.classList.contains('open')) {
+        return;
+      }
+
+      e.preventDefault();
+      const targetHref = link.getAttribute('href');
+      closeMobileMenu();
+
+      if (targetHref) {
+        window.location.href = targetHref;
+      }
+    });
+  }
+
+  // Marcheaza link-ul paginii curente ca activ
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.main-nav ul li a').forEach(link => {
+    const linkPage = link.getAttribute('href').split('/').pop();
+    if (linkPage === currentPage) {
+      link.classList.add('active');
+    }
+  });
+
+  // Duplicam continutul de 2 ori (total 3 copii) pentru bucla infinita fara goluri
   document.querySelectorAll('.scroll-gallery-row').forEach(row => {
     const content = row.innerHTML;
-    row.innerHTML += content;
+    row.innerHTML = content + content + content;
   });
+
+  // animatie galerie scroll - selectam DUPA duplicare
+  const galleries = document.querySelectorAll('.scroll-gallery-row');
+  const scrollSpeed = 1.5;
+  const smoothFactor = 0.012; // cat de repede "recupereaza" - mai mic = delay mai mare
+
+  // Pre-calculam latimea unui set de imagini (1/3 din total)
+  const galleryWidths = [];
+  const currentPositions = []; // pozitia curenta (smoothed)
+  galleries.forEach(gallery => {
+    galleryWidths.push(gallery.scrollWidth / 3);
+    currentPositions.push(0);
+  });
+
+  function updateGalleryPosition() {
+      const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+
+      galleries.forEach((gallery, i) => {
+          const oneSetWidth = galleryWidths[i];
+          if (oneSetWidth <= 0) return;
+
+          // Pozitia tinta (unde ar trebui sa fie instant)
+          const targetTranslate = scrollTop * scrollSpeed;
+
+          // Lerp: pozitia curenta se apropie treptat de tinta (efect de delay/inertie)
+          currentPositions[i] += (targetTranslate - currentPositions[i]) * smoothFactor;
+
+          const isReverse = gallery.classList.contains('reverse');
+          let offset = currentPositions[i] % oneSetWidth;
+
+          let newX;
+          if (isReverse) {
+              newX = offset - oneSetWidth;
+          } else {
+              newX = -offset - oneSetWidth;
+          }
+
+          gallery.style.transform = `translateX(${newX}px)`;
+      });
+
+      requestAnimationFrame(updateGalleryPosition);
+  }
+
+  // Pornim loop-ul de animatie - functioneaza pe orice dispozitiv
+  if (galleries.length > 0) {
+      requestAnimationFrame(updateGalleryPosition);
+  }
 
   const nav = document.querySelector('.main-nav');
   let lastScrollY = 0; // initializare cu 0
@@ -98,42 +223,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-});
-
-// animatie galerie scroll
-const galleries = document.querySelectorAll('.scroll-gallery-row');
-const scrollSpeed = 0.5; // Viteza redusa pentru miscare mai lenta si mai fluida
-let ticking = false; // Throttling pentru performanta
-
-window.addEventListener('scroll', () => {
-    if (!ticking) {
-        window.requestAnimationFrame(() => {
-            const scrollTop = window.pageYOffset;
-
-            galleries.forEach(gallery => {
-                // calculam latimea totala a imaginilor originale
-                const scrollWidth = gallery.scrollWidth / 2;
-                
-                // calculam valoarea translatiei
-                let baseTranslate = scrollTop * scrollSpeed;
-
-                // determinam directia
-                const direction = gallery.classList.contains('reverse') ? 1 : -1;
-
-                // aplicam directia si folosim modulo pentru bucla infinita
-                let newX = (baseTranslate * direction) % scrollWidth;
-
-                // Pentru randul 'reverse', mentinem offset-ul initial
-                if (gallery.classList.contains('reverse')) {
-                    newX -= scrollWidth;
-                }
-
-                gallery.style.transform = `translateX(${newX}px)`;
-            });
-
-            ticking = false;
-        });
-
-        ticking = true;
-    }
 });
