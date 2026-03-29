@@ -246,4 +246,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Lazy loading pentru hero video - incepe autoplay doar cand video e in viewport
+  const heroVideo = document.querySelector('.hero-video');
+  if (heroVideo) {
+    // Inițial, video nu e în autoplay
+    heroVideo.autoplay = false;
+    
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Video e in viewport - porneste autoplay
+          heroVideo.autoplay = true;
+          heroVideo.play();
+        } else {
+          // Video nu mai e in viewport - opreste
+          heroVideo.autoplay = false;
+          heroVideo.pause();
+        }
+      });
+    }, { threshold: 0.25 });
+    
+    videoObserver.observe(heroVideo);
+  }
 });
