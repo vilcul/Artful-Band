@@ -20,9 +20,15 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use(express.static(path.join(__dirname, "public"), {
-  maxAge: '1y',
-  immutable: true,
-  etag: false
+  etag: true,
+  maxAge: "1y",
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith(".html")) {
+      res.setHeader("Cache-Control", "no-cache");
+      return;
+    }
+    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+  }
 }));
 
 app.post("/api/users/request", async (req, res) => {
