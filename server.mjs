@@ -19,7 +19,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), {
+  maxAge: '1y',
+  immutable: true,
+  etag: false
+}));
 
 app.post("/api/users/request", async (req, res) => {
   console.log("Date primite: ", req.body);
