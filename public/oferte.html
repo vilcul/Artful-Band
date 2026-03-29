@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="ro">
   <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TKM7CZ6V36"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TKM7CZ6V36');
+</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Solicită o Ofertă - Artful Band</title>
@@ -8,6 +17,7 @@
       name="description"
       content="Completează formularul pentru a primi o ofertă personalizată pentru evenimentul tău."
     />
+    <link rel="preload" as="style" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,6 +29,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     />
+    <link rel="preload" as="style" href="style.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="s-page">
@@ -259,7 +270,7 @@
       </button>
     </div>
 
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script async src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
       if (window.AOS) {
         AOS.init({
@@ -275,6 +286,6 @@
         });
       }
     </script>
-    <script src="script.js" defer></script>
+    <script src="script.js"></script>
   </body>
 </html>
