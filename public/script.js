@@ -77,8 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const [rawPath] = href.split('#');
     let path = rawPath || '/';
 
-    if (path === 'index.html' || path === '/') {
-      return '/';
+    if (path === 'index.html' || path === '/' || path === '/index' || path === '/index.html') {
+      return '/acasa';
     }
 
     if (path.endsWith('.html')) {
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return path.replace(/\/+$/, '') || '/';
   };
 
-  const currentPath = (window.location.pathname.replace(/\/+$/, '') || '/');
+  const currentPath = normalizePath(window.location.pathname) || '/acasa';
   document.querySelectorAll('.main-nav ul li a').forEach(link => {
     const linkPath = normalizePath(link.getAttribute('href'));
     if (linkPath && linkPath === currentPath) {

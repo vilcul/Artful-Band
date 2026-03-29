@@ -32,6 +32,11 @@ app.use(express.static(path.join(__dirname, "public"), {
 }));
 
 app.get("/", (req, res) => {
+  res.redirect(302, "/acasa");
+});
+
+app.get("/acasa", (req, res) => {
+  res.setHeader("Cache-Control", "no-cache");
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
@@ -44,7 +49,7 @@ app.get("/oferta", (req, res) => {
 });
 
 // Redirect legacy .html routes to clean URLs
-app.get("/index.html", (req, res) => res.redirect(301, "/"));
+app.get("/index.html", (req, res) => res.redirect(301, "/acasa"));
 app.get("/echipa.html", (req, res) => res.redirect(301, "/echipa"));
 app.get("/oferte.html", (req, res) => res.redirect(301, "/oferta"));
 app.get("/oferte", (req, res) => res.redirect(301, "/oferta"));
