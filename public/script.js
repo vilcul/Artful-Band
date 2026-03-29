@@ -106,51 +106,47 @@ document.addEventListener('DOMContentLoaded', () => {
     row.innerHTML = content + content + content;
   });
 
-  // animatie galerie scroll - selectam DUPA duplicare
+  // Animatia galeriei consuma mult CPU pe telefon; o rulam doar pe desktop.
   const galleries = document.querySelectorAll('.scroll-gallery-row');
-  const scrollSpeed = 1.5;
-  const smoothFactor = 0.012; // cat de repede "recupereaza" - mai mic = delay mai mare
+  const isDesktop = window.matchMedia('(min-width: 1025px)').matches;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Pre-calculam latimea unui set de imagini (1/3 din total)
-  const galleryWidths = [];
-  const currentPositions = []; // pozitia curenta (smoothed)
-  galleries.forEach(gallery => {
-    galleryWidths.push(gallery.scrollWidth / 3);
-    currentPositions.push(0);
-  });
+  if (galleries.length > 0 && isDesktop && !prefersReducedMotion) {
+    const scrollSpeed = 1.5;
+    const smoothFactor = 0.012; // cat de repede "recupereaza" - mai mic = delay mai mare
 
-  function updateGalleryPosition() {
+    // Pre-calculam latimea unui set de imagini (1/3 din total)
+    const galleryWidths = [];
+    const currentPositions = []; // pozitia curenta (smoothed)
+    galleries.forEach(gallery => {
+      galleryWidths.push(gallery.scrollWidth / 3);
+      currentPositions.push(0);
+    });
+
+    function updateGalleryPosition() {
       const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
 
       galleries.forEach((gallery, i) => {
-          const oneSetWidth = galleryWidths[i];
-          if (oneSetWidth <= 0) return;
+        const oneSetWidth = galleryWidths[i];
+        if (oneSetWidth <= 0) return;
 
-          // Pozitia tinta (unde ar trebui sa fie instant)
-          const targetTranslate = scrollTop * scrollSpeed;
+        // Pozitia tinta (unde ar trebui sa fie instant)
+        const targetTranslate = scrollTop * scrollSpeed;
 
-          // Lerp: pozitia curenta se apropie treptat de tinta (efect de delay/inertie)
-          currentPositions[i] += (targetTranslate - currentPositions[i]) * smoothFactor;
+        // Lerp: pozitia curenta se apropie treptat de tinta (efect de delay/inertie)
+        currentPositions[i] += (targetTranslate - currentPositions[i]) * smoothFactor;
 
-          const isReverse = gallery.classList.contains('reverse');
-          let offset = currentPositions[i] % oneSetWidth;
+        const isReverse = gallery.classList.contains('reverse');
+        const offset = currentPositions[i] % oneSetWidth;
 
-          let newX;
-          if (isReverse) {
-              newX = offset - oneSetWidth;
-          } else {
-              newX = -offset - oneSetWidth;
-          }
-
-          gallery.style.transform = `translateX(${newX}px)`;
+        const newX = isReverse ? offset - oneSetWidth : -offset - oneSetWidth;
+        gallery.style.transform = `translateX(${newX}px)`;
       });
 
       requestAnimationFrame(updateGalleryPosition);
-  }
+    }
 
-  // Pornim loop-ul de animatie - functioneaza pe orice dispozitiv
-  if (galleries.length > 0) {
-      requestAnimationFrame(updateGalleryPosition);
+    requestAnimationFrame(updateGalleryPosition);
   }
 
   const nav = document.querySelector('.main-nav');
@@ -252,21 +248,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroVideo) {
     // Inițial, video nu e în autoplay
     heroVideo.autoplay = false;
-    
-    const videoObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Video e in viewport - porneste autoplay
-          heroVideo.autoplay = true;
-          heroVideo.play();
-        } else {
-          // Video nu mai e in viewport - opreste
-          heroVideo.autoplay = false;
-          heroVideo.pause();
-        }
-      });
-    }, { threshold: 0.25 });
-    
-    videoObserver.observe(heroVideo);
+
+    if ('IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // Video e in viewport - porneste autoplay
+            heroVideo.autoplay = true;
+            heroVideo.play().catch(() => {});
+          } else {
+            // Video nu mai e in viewport - opreste
+            heroVideo.autoplay = false;
+            heroVideo.pause();
+          }
+        });
+      }, { threshold: 0.25 });
+
+      videoObserver.observe(heroVideo);
+    } else {
+      // Fallback pentru browsere vechi
+      heroVideo.autoplay = true;
+      heroVideo.play().catch(() => {});
+    }
   }
 });
