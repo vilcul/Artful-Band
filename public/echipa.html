@@ -15,7 +15,7 @@
 
     <header class="secondary-page-header">
         <nav class="main-nav secondary-nav">
-            <a href="index.html" class="nav-logo">
+            <a href="/" class="nav-logo">
                 <img src="imagini/Logo artful.webp" alt="Artful Band Logo" width="120" height="48">
             </a>
             <button class="hamburger" aria-label="Meniu">
@@ -24,11 +24,11 @@
                 <span></span>
             </button>
             <ul>
-                <li><a href="index.html">ACASĂ</a></li>
-                <li><a href="echipa.html" class="active">DESPRE NOI</a></li>
-                <li><a href="oferte.html">SOLICITĂ OFERTĂ</a></li>
-                <li><a href="index.html#media">MEDIA</a></li>
-                <li><a href="index.html#contact">CONTACT</a></li>
+                <li><a href="/">ACASĂ</a></li>
+                <li><a href="/echipa" class="active">DESPRE NOI</a></li>
+                <li><a href="/oferta">SOLICITĂ OFERTĂ</a></li>
+                <li><a href="/#media">MEDIA</a></li>
+                <li><a href="/#contact">CONTACT</a></li>
             </ul>
         </nav>
     </header>
@@ -157,7 +157,7 @@
         <section class="cta-section" data-aos="fade-up" data-aos-duration="600">
             <h2>Gata să Rezervi?</h2>
             <p>Contactează-ne pentru o ofertă personalizată!</p>
-            <a href="oferte.html" class="cta-button">Solicită Ofertă</a>
+            <a href="/oferta" class="cta-button">Solicită Ofertă</a>
         </section>
     </main>
 
@@ -165,7 +165,7 @@
       <div class="footer-container">
         <div class="footer-brand">
           <div class="footer-brand-top">
-            <a href="index.html" class="footer-logo">
+            <a href="/" class="footer-logo">
               <img src="imagini/Logo artful.webp" alt="Artful Band Logo" width="120" height="48" />
             </a>
             <p class="footer-tags">Band | Organizatori de evenimente | Servicii de nuntă | Trupă cover pentru evenimente</p>
@@ -190,10 +190,10 @@
         <div class="footer-column">
           <h4>Navigare</h4>
           <ul>
-            <li><a href="index.html">Acasă</a></li>
-            <li><a href="echipa.html">Despre noi</a></li>
-            <li><a href="oferte.html">Solicită ofertă</a></li>
-            <li><a href="index.html#media">Media</a></li>
+            <li><a href="/">Acasă</a></li>
+            <li><a href="/echipa">Despre noi</a></li>
+            <li><a href="/oferta">Solicită ofertă</a></li>
+            <li><a href="/#media">Media</a></li>
           </ul>
         </div>
 
@@ -237,12 +237,19 @@
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
+      if (window.AOS) {
         AOS.init({ 
-            once: true, 
-            duration: 600,
-            offset: 50,
-            delay: 0
+          once: true, 
+          duration: 600,
+          offset: 50,
+          delay: 0
         });
+      } else {
+        document.querySelectorAll('[data-aos]').forEach((el) => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+      }
     </script>
     <script src="script.js" defer></script>
 </body>

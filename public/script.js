@@ -68,11 +68,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Marcheaza link-ul paginii curente ca activ
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  // Marcheaza link-ul paginii curente ca activ (compatibil cu URL-uri fara .html)
+  const normalizePath = (href) => {
+    if (!href || href.startsWith('#') || href.startsWith('http')) {
+      return null;
+    }
+
+    const [rawPath] = href.split('#');
+    let path = rawPath || '/';
+
+    if (path === 'index.html' || path === '/') {
+      return '/';
+    }
+
+    if (path.endsWith('.html')) {
+      path = `/${path.replace('.html', '')}`;
+    }
+
+    if (!path.startsWith('/')) {
+      path = `/${path}`;
+    }
+
+    return path.replace(/\/+$/, '') || '/';
+  };
+
+  const currentPath = (window.location.pathname.replace(/\/+$/, '') || '/');
   document.querySelectorAll('.main-nav ul li a').forEach(link => {
-    const linkPage = link.getAttribute('href').split('/').pop();
-    if (linkPage === currentPage) {
+    const linkPath = normalizePath(link.getAttribute('href'));
+    if (linkPath && linkPath === currentPath) {
       link.classList.add('active');
     }
   });

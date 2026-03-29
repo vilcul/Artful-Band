@@ -31,6 +31,24 @@ app.use(express.static(path.join(__dirname, "public"), {
   }
 }));
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/echipa", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "echipa.html"));
+});
+
+app.get("/oferta", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "oferte.html"));
+});
+
+// Redirect legacy .html routes to clean URLs
+app.get("/index.html", (req, res) => res.redirect(301, "/"));
+app.get("/echipa.html", (req, res) => res.redirect(301, "/echipa"));
+app.get("/oferte.html", (req, res) => res.redirect(301, "/oferta"));
+app.get("/oferte", (req, res) => res.redirect(301, "/oferta"));
+
 app.post("/api/users/request", async (req, res) => {
   console.log("Date primite: ", req.body);
 
@@ -114,6 +132,6 @@ app.post("/api/users/request", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server pornit pe http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server pornit pe portul ${PORT}`);
 });
